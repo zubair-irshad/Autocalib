@@ -31,7 +31,7 @@ import torch
 import rff
 from copy import deepcopy
 from utils_loc.pt3d_utils import matrix_to_quaternion, quaternion_to_matrix
-from torch.amp import autocast
+from torch.cuda.amp import autocast
 
 positional_encoding = rff.layers.PositionalEncoding(sigma=1.0, m=5)
 basic_encoding = rff.layers.BasicEncoding()

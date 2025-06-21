@@ -238,8 +238,9 @@ def run_tracker_on_images(model, images,
         pred_tracks, pred_visibility = model(images[start:end].unsqueeze(0), grid_size=grid_size)
         pred_tracks, pred_visibility = pred_tracks.squeeze(0), pred_visibility.squeeze(0) # (end-start) N 2, (end-start) N 1
         
-        # print(pred_tracks.shape, pred_visibility.shape)
-        # print(pos, T)
+        print(pred_tracks.shape, pred_visibility.shape)
+        print(pos, T)
+        print(start, end)
 
         for t in range(start, end-1):
             pred_track, pred_track_next, visibilities = pred_tracks[t-start], pred_tracks[t+1-start], pred_visibility[t-start]

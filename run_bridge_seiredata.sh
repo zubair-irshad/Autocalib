@@ -33,11 +33,11 @@ for scene_name in "${SCENE_NAMES[@]}"; do
     if [ "$i" -ge "$START_INDEX" ]; then
         echo "Running Python script for Index: $i, Scene Path: $scene_path"
         
-        # cd /data/user_data/wenhsuac/chenyuzhang/moge_video
-        # # Activate the conda environment
-        # conda deactivate
-        # conda activate mega_sam
-        # python moge_static_bridge.py --scene_path "$scene_path"
+        cd /data/user_data/wenhsuac/chenyuzhang/moge_video
+        # Activate the conda environment
+        conda deactivate
+        conda activate mega_sam
+        python moge_static_bridge.py --scene_path "$scene_path"
 
         conda deactivate
         conda activate dr

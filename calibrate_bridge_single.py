@@ -1,3 +1,4 @@
+
 import sys
 import tempfile
 import os
@@ -461,7 +462,7 @@ def optimize(optimize_camera, optimize_joints, camera_lr, joints_lr, optimizatio
                 image_np_final.save(f'inspection_features_1/image_render_{i}.png')
                 
                 image_blend = Image.blend(image_np_render, image_np, alpha=0.5)
-                image_blend.save(f'inspection_features_1/image_blend_{Optimize_list[i]}_{epoch}.png')
+                image_blend.save(os.path.join(SCENE_PATH, f'blend_epoch_{epoch}.png'))
                 
         threshold = 0.5
         gaussian_masks_scaled = (gaussian_masks * 255).byte()  # uint8 format
@@ -583,7 +584,7 @@ def compute_loss(optimize_camera, optimize_joints, camera_lr, joints_lr, optimiz
     
     global first_camera
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    if render_feat or use_direct_feat_compute:
+    if use_direct_feat_compute:
         dinov2 = torch.hub.load('facebookresearch/dinov2', 'dinov2_vitb14') # s, b, l, g
         dinov2 = dinov2.to(device)
         dino_transform = T.Compose([
@@ -976,8 +977,6 @@ def compute_loss(optimize_camera, optimize_joints, camera_lr, joints_lr, optimiz
     return all_cameras[0].world_view_transform.transpose(0, 1).detach().cpu().numpy(), loss_direct_feat.item()
     
 
-
-
 def prepare_flow(images, device, data_file):
     mujoco_images = []
     for c_idx in range(len(images)):
@@ -996,23 +995,6 @@ def prepare_flow(images, device, data_file):
     }
     # Save the dictionary to the file
     torch.save(data_to_save, data_file)
-
-def grid_search():
-    global extrinsics
-    cam_poses = generate_camera_poses()
-    best_pose = None
-    best_score = float('inf')
-    for pose in cam_poses:
-        extrinsics = euler_to_extrinsic(pose)
-        optimize_camera = True
-        optimize_joints = False
-        camera_lr = 0.0
-        joints_lr = 0.0
-        optimization_steps = 1
-        params, flow_loss = optimize(optimize_camera, optimize_joints, camera_lr, joints_lr, optimization_steps, 
-                    fwd_flows, fwd_valids)
-        
-        
 
 
 def euler_to_extrinsic(pose_6d, euler_order='xyz'):
@@ -1046,161 +1028,99 @@ def euler_to_extrinsic(pose_6d, euler_order='xyz'):
 
     return extrinsic
 
-def euler_to_quaternion(roll, pitch, yaw):
-    """
-    Convert Euler angles (roll, pitch, yaw) to a quaternion.
-    
-    Args:
-        roll (float): Roll angle in radians.
-        pitch (float): Pitch angle in radians.
-        yaw (float): Yaw angle in radians.
-    
-    Returns:
-        tuple: Quaternion components (w, x, y, z).
-    """
-    # Compute half-angles
-    cr = np.cos(roll * 0.5)  # Cosine of roll/2
-    sr = np.sin(roll * 0.5)  # Sine of roll/2
-    cp = np.cos(pitch * 0.5) # Cosine of pitch/2
-    sp = np.sin(pitch * 0.5) # Sine of pitch/2
-    cy = np.cos(yaw * 0.5)   # Cosine of yaw/2
-    sy = np.sin(yaw * 0.5)   # Sine of yaw/2
-    
-    # Calculate quaternion components
-    qw = cr * cp * cy + sr * sp * sy
-    qx = sr * cp * cy - cr * sp * sy
-    qy = cr * sp * cy + sr * cp * sy
-    qz = cr * cp * sy - sr * sp * cy
-    
-    return qw, qx, qy, qz
 
-def objective(q):
-    data.qpos = q
-    mujoco.mj_forward(model, data)
-    current_pos = data.xpos[body_id]
-    current_quat = data.xquat[body_id]
-    pos_error = np.linalg.norm(current_pos - desired_pos)
-    quat_error = np.linalg.norm(current_quat - desired_quat)  # Simplified
-    print(current_pos)
-    return pos_error + quat_error
+def set_nested_dict(d, keys, value):
+    for key in keys[:-1]:
+        d = d.setdefault(key, {})
+    d[keys[-1]] = value
 
-def state2transform(state, default_rotation):
-    assert state.shape == (7,)
-    xyz, euler, gripper_state = state[:3], state[3:6], state[6:]
-    trans = RpToTrans(eulerAnglesToRotationMatrix(euler).dot(default_rotation), xyz)
-    return trans
-
-def eulerAnglesToRotationMatrix(theta):
-
-    R_x = np.array([[1,         0,                  0                   ],
-                    [0,         math.cos(theta[0]), -math.sin(theta[0]) ],
-                    [0,         math.sin(theta[0]), math.cos(theta[0])  ]
-                    ])
-
-    R_y = np.array([[math.cos(theta[1]),    0,      math.sin(theta[1])  ],
-                    [0,                     1,      0                   ],
-                    [-math.sin(theta[1]),   0,      math.cos(theta[1])  ]
-                    ])
-
-    R_z = np.array([[math.cos(theta[2]),    -math.sin(theta[2]),    0],
-                    [math.sin(theta[2]),    math.cos(theta[2]),     0],
-                    [0,                     0,                      1]
-                    ])
-
-    R = np.dot(R_z, np.dot( R_y, R_x ))
-
-    return R
-
-def RpToTrans(R, p):
-    """Converts a rotation matrix and a position vector into homogeneous
-    transformation matrix
-
-    :param R: A 3x3 rotation matrix
-    :param p: A 3-vector
-    :return: A homogeneous transformation matrix corresponding to the inputs
-
-    Example Input:
-        R = np.array([[1, 0,  0],
-                      [0, 0, -1],
-                      [0, 1,  0]])
-        p = np.array([1, 2, 5])
-    Output:
-        np.array([[1, 0,  0, 1],
-                  [0, 0, -1, 2],
-                  [0, 1,  0, 5],
-                  [0, 0,  0, 1]])
-    """
-    return np.r_[np.c_[R, p], [[0, 0, 0, 1]]]
-
-def transform2quat(transform):
-    print(transform)
-    translation = transform[:3, 3]
-    quat = quaternion_from_matrix(transform)
-
-    return translation[0], translation[1], translation[2], quat[0], quat[1], quat[2], quat[3] # w, x, y, z
+def get_nested_dict(d, keys):
+    for key in keys:
+        if isinstance(d, dict) and key in d:
+            d = d[key]
+        else:
+            return None
+    return d
 
 """
-python optimize_multiframe_bridge_single_seriedata.py --model_path output/widow0
+python calibrate_bridge_single.py --model_path output/widow0 --scene_path /data/group_data/katefgroup/datasets/bridge_chenyu/raw/bridge_data_v1/berkeley/toysink2_bww/put_spoon_in_pot/2021-06-13_12-44-45/raw/traj_group0/traj38
 """
-
-NEUTRAL_JOINT_STATE = np.array([-0.13192235, -0.76238847,  0.44485444,
-                                -0.01994175,  1.7564081,  -0.15953401])
-DEFAULT_ROTATION = np.array([[0 , 0, 1.0],
-                             [0, 1.0,  0],
-                             [-1.0,  0, 0]])
-
 
 if __name__ == "__main__":
-    BATCH_PATH = '/data/group_data/katefgroup/datasets/bridge_chenyu/yidi/chenyu/bridge_seriedata'
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--scene_path', type=str, required=True, help='Path to the scene directory')
     parser.add_argument('--model_path', type=str, default='output/widow0', help='Path to the scene directory')
+    parser.add_argument('--raw_path', type=str, default="/data/group_data/katefgroup/datasets/bridge_chenyu/raw")
     parser.add_argument('--dict_path', type=str, default="/data/group_data/katefgroup/datasets/bridge_chenyu/raw/random_calib_dict.pkl")
     args = parser.parse_args()
-    # print('here')
-    print(args)
+    
+    print(args.scene_path, 'scene path')
+    
+    # Load or initialize calibration dictionary
+    if os.path.exists(args.dict_path):
+        with open(args.dict_path, 'rb') as f:
+            calib_dict = pickle.load(f)
+    else:
+        calib_dict = {}
+
+    # Compute relative path and keys from scene_path
+    rel_path = os.path.relpath(args.scene_path, args.raw_path)
+    keys = rel_path.split(os.sep)
+
+    # Extract trajectory number n
+    traj_name = keys[-1]
+    if not traj_name.startswith('traj'):
+        raise ValueError("Invalid trajectory name")
+    n = int(traj_name[4:])
+
+    # Initialize w2c based on n
+    resume = False
+    if n == 0:
+        w2c = np.array([
+            [0.40230105648431419, -0.54737938074000059, 0.73384581043452057, 0.0],
+            [-0.91514565098874134, -0.21790723695396816, 0.33915317123606575, 0.0],
+            [-0.025735139945173187, -0.8080174810137345, -0.58859617136728104, 0.0],
+            [-0.1495516053826326, 0.24801468373558327, 0.13542126749117278, 1.0]
+        ]).T
+    else:
+        traj0_keys = keys[:-1] + ['traj0']
+        traj0_dict = get_nested_dict(calib_dict, traj0_keys)
+        if traj0_dict is not None and 'w2c' in traj0_dict:
+            w2c = np.array(traj0_dict['w2c'])
+            resume = True
+            print('Resuming from existing calibration data for traj0')
+        else:
+            w2c = np.array([
+                [0.40230105648431419, -0.54737938074000059, 0.73384581043452057, 0.0],
+                [-0.91514565098874134, -0.21790723695396816, 0.33915317123606575, 0.0],
+                [-0.025735139945173187, -0.8080174810137345, -0.58859617136728104, 0.0],
+                [-0.1495516053826326, 0.24801468373558327, 0.13542126749117278, 1.0]
+            ]).T
+    
+    print('here')
     render_feat = False
     use_direct_feat = True
     use_direct_feat_compute = True
     gaussians, background_color, sample_cameras, kinematic_chain = initialize_gaussians(model_path=args.model_path)
-    
-    model = mujoco.MjModel.from_xml_path(os.path.join(gaussians.model_path, 'robot_xml', 'model.xml'))
-    chain = build_chain_from_mjcf_path(os.path.join(gaussians.model_path, 'robot_xml', 'model.xml'))
-    # print(chain)
-    data = mujoco.MjData(model)
-    # print(data)
-    n_joints = model.njnt
-    site_name = 'gripper_link'  # Replace with the actual site name from your model
-    body_id = model.body('wx250s/gripper_link').id
-
-    if render_feat:
-        my_feat_decoder = skip_feat_decoder(32).cuda()
-        decoder_dict_path = os.path.join(gaussians.model_path, 'point_cloud', 'pose_conditioned_iteration_4000', 'feat_decoder.pth')
-        my_feat_decoder.load_state_dict(torch.load(decoder_dict_path))
     background_color = torch.ones((3,)).cuda()
 
     SCENE_PATH = args.scene_path
     image_folder = os.path.join(SCENE_PATH, 'images0')
     obs_dict = pickle.load(open(os.path.join(SCENE_PATH, 'obs_dict.pkl'), 'rb'))
     joints = obs_dict['qpos']
-    print(joints.shape, 'joints shape')
     states = obs_dict["full_state"]
-    print(states.shape, 'states shape')
     
     grippers_whole = states[:, -1:]
     fingers_whole = grippers_whole * 0.022 + 0.015
     fingers_whole = np.concatenate([fingers_whole, -fingers_whole], axis=1)
     joints_whole = np.concatenate([joints, fingers_whole], axis=1)
-    print('joints_whole: ', joints_whole.shape)
-    print(joints_whole[:10])
     
     image_list_whole = []
     image_names = os.listdir(image_folder)
-    image_names = sorted(image_names, key=lambda x: int(x.split('.')[0]))
-    
+    image_names = sorted(image_names, key=lambda x: int(x.split('_')[-1].split('.')[0]))
     image_paths = [os.path.join(image_folder, path) for path in image_names]
-    # print(image_paths, 'image paths')
+    print(image_paths, 'image paths')
     for k in range(len(joints_whole)):
         image_path = image_paths[k]
         img = Image.open(image_path)
@@ -1208,9 +1128,7 @@ if __name__ == "__main__":
         image_list_whole.append(img)
     image_list_whole = np.stack(image_list_whole)
     B, H, W, C = image_list_whole.shape
-    print(image_list_whole.shape, 'images')
     
-    results_file = os.path.join(SCENE_PATH, 'results.pkl')
     extrinsics_save_path = os.path.join(SCENE_PATH, 'extrinsics.npy')
     intrinsics_save_path = os.path.join(SCENE_PATH, 'intrinsics.npy')
     vis_features = True
@@ -1246,31 +1164,10 @@ if __name__ == "__main__":
     fwd_flows_whole = data_loaded['fwd_flows']
     fwd_valids_whole = data_loaded['fwd_valids']
     
-    # intrinsics = np.load(os.path.join(DATA_PATH, 'intrinsics.npy'))
     intrinsics = np.array([[fx_moge, 0.0, W / 2],
                         [0.0, fy_moge, H / 2],
                         [0.0, 0.0, 1.0]])
     
-    # print(intrinsics, 'intrinsics')
-    
-    w2c = np.array([
-                            [0.40230105648431419,
-                            -0.54737938074000059,
-                            0.73384581043452057,
-                            0.0],
-                            [-0.91514565098874134,
-                            -0.21790723695396816,
-                            0.33915317123606575,
-                            0.0],
-                            [-0.025735139945173187,
-                            -0.8080174810137345,
-                            -0.58859617136728104,
-                            0.0],
-                            [-0.1495516053826326,
-                            0.24801468373558327,
-                            0.13542126749117278,
-                            1.0]
-                        ]).T
     # c2w = np.linalg.inv(w2c)
     # Define perturbation ranges
     thetas_x = torch.linspace(-0.2, 0.2, 5)  # 3 steps, ±0.1 radians
@@ -1300,14 +1197,12 @@ if __name__ == "__main__":
     #     c2ws = perturb_extrinsic(torch.tensor(np.eye(4), dtype=torch.float32), thetas_x, thetas_y, thetas_z, dxs, dys, dzs)
     #     np.save(extrinsics_save_path, perturbed_extrinsics)
     # print(perturbed_extrinsics)
-    best_pose = None
-    best_camera = None
-    best_extrinsics = None
+    best_extrinsics = w2c
     best_score = float('inf')
     epoch = 0
     first_camera = None  # Track the first camera to share its parameters
     # print(len(perturbed_extrinsics), 'perturbed extrinsics')
-    if True:
+    if not resume:
         for extrinsic in perturbed_extrinsics:
             extrinsics = extrinsic
             optimize_camera = False
@@ -1330,49 +1225,19 @@ if __name__ == "__main__":
                 best_extrinsics = extrinsics
         print('best pose: ', best_extrinsics)
         print(best_score, 'best score')
-    # pose = np.array([0, 0.57382269, 0.84167107, -2.02259688, -0.08240233,
-    #                  -2.40839443])
-    # pose = np.array([0.006111708272572871, 0.7799910768896609, 0.48825174062541965, -1.5580715300648718, 0.0, -2.5771203117437884]) # for left cam
-    # pose = np.array([0.14113915484291922, -0.3383929566839041, 0.8833177110592437, -2.162701547806665, -0.0, -0.9353672131449788]) # for right cam
-    # extrinsics = euler_to_extrinsic(pose)
-    # wait a second
-    time.sleep(4)
+
     first_camera = None
-    # extrinsics = euler_to_extrinsic(best_pose)
     extrinsics = best_extrinsics
-    # extrinsics = np.array([
-    #                         [0.40230105648431419,
-    #                         -0.54737938074000059,
-    #                         0.73384581043452057,
-    #                         0.0],
-    #                         [-0.91514565098874134,
-    #                         -0.21790723695396816,
-    #                         0.33915317123606575,
-    #                         0.0],
-    #                         [-0.025735139945173187,
-    #                         -0.8080174810137345,
-    #                         -0.58859617136728104,
-    #                         0.0],
-    #                         [-0.1495516053826326,
-    #                         0.24801468373558327,
-    #                         0.13542126749117278,
-    #                         1.0]
-    #                     ]).T
-    # extrinsics = gt_extrinsics
-    print(extrinsics)
-    
-    
 
     l = len(image_list_whole)
-    # l = 100
     batch_size = 3
     step_size = 3
     steps_per_epoch = l // step_size
     epochs = 20
     offset = 0
     inset = 0
-    
-    # steps_per_epoch = 5
+    if resume:
+        epochs = 1
     
     for epoch in tqdm(range(epochs)):
         for batch_idx in range(steps_per_epoch):
@@ -1382,7 +1247,6 @@ if __name__ == "__main__":
                     break
                 Optimize_list.append(batch_idx * step_size + image_idx + offset)
             print(Optimize_list)
-            # Optimize_list = [3, 4, 5]
             if len(Optimize_list) < 1:
                 continue
             image_list = image_list_whole[Optimize_list]
@@ -1395,22 +1259,23 @@ if __name__ == "__main__":
             optimize_camera = True
             optimize_joints = False
             camera_lr = 0.001 # 0.001
-            # decay lr using epoch
+            if resume:
+                camera_lr = 0.0001
             camera_lr = camera_lr * (0.5 ** (epoch // 4))
-            
             joints_lr = 0.001
             optimization_steps = 10
             powerful_optimize_dropdown = "Disabled"
-            noise_input = 0.01
-            num_inits_input = 1
             params, valid_optimization = optimize(optimize_camera, optimize_joints, camera_lr, joints_lr, optimization_steps, 
                         fwd_flows, fwd_valids)
             torch.cuda.empty_cache()
         print(params)
-        results_dict = {'extrinsics': params.tolist(), 'valid_optimization': valid_optimization, 'intrinsics': intrinsics.tolist()}
-        # save extrinsics and intrinsics
-        print(params, 'params')
-        print(intrinsics, 'intrinsics')
         np.save(extrinsics_save_path, params)
         np.save(intrinsics_save_path, intrinsics)
-    
+        
+    # Update calib_dict after all epochs
+    set_nested_dict(calib_dict, keys, {'w2c': params.tolist(), 'intrinsic': intrinsics.tolist()})
+    with open(args.dict_path, 'wb') as f:
+        pickle.dump(calib_dict, f)
+
+    print(params, 'params')
+    print(intrinsics, 'intrinsics')

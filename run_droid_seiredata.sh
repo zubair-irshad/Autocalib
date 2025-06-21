@@ -1,6 +1,6 @@
 
 # BATCH_PATH="/data/group_data/katefgroup/datasets/bridge_chenyu/yidi/chenyu/bridge_seriedata"  # Replace with your actual path
-BATCH_PATH="/data/group_data/katefgroup/datasets/droid_chenyu/droid_extract_2"
+BATCH_PATH="/data/group_data/katefgroup/datasets/droid_chenyu/droid_extract_whole"
 # BATCH_PATH="/data/group_data/katefgroup/datasets/bridge_chenyu/yidi/chenyu/bridge_ori"
 
 # Step 1: List directories in BATCH_PATH

@@ -1,0 +1,6 @@
+[submodule "UFM"]
+	path = UFM
+	url = https://github.com/UniFlowMatch/UFM.git
+[submodule "alltracker"]
+	path = alltracker
+	url = https://github.com/aharley/alltracker.git

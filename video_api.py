@@ -14,6 +14,8 @@ from gaussian_renderer import render
 def initialize_gaussians(model_path=None, from_ckpt=False):
     parser = ArgumentParser(description="Testing script parameters")
     parser.add_argument('--scene_path', type=str, required=True, help='Path to the scene directory')
+    parser.add_argument('--raw_path', type=str, default="/data/group_data/katefgroup/datasets/bridge_chenyu/raw")
+    parser.add_argument('--dict_path', type=str, default="/data/group_data/katefgroup/datasets/bridge_chenyu/raw/random_calib_dict.pkl")
     model = ModelParams(parser, sentinel=True)
     pipeline = PipelineParams(parser)
     opt = OptimizationParams(parser)

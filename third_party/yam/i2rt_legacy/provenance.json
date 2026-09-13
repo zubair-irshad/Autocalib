@@ -1,0 +1,91 @@
+{
+  "repo": "i2rt-robotics/i2rt",
+  "commit": "d4efb66d81bd8bde42909880b16591d4af82e8c0",
+  "files": [
+    {
+      "path": "LICENSE",
+      "upstream_path": "LICENSE",
+      "sha256": "7cd0a0224a287ebd6c45703eb6623d264c7810f8958d65de8f99e87ccd9f4891"
+    },
+    {
+      "path": "assets/base_link_collision.stl",
+      "upstream_path": "robot_models/yam/assets/base_link_collision.stl",
+      "sha256": "aec8d4353c4b86af4f575c72bbc34df7f91348d0fd683b8b50f59d581f606311"
+    },
+    {
+      "path": "assets/base_link_visual.stl",
+      "upstream_path": "robot_models/yam/assets/base_link_visual.stl",
+      "sha256": "aec8d4353c4b86af4f575c72bbc34df7f91348d0fd683b8b50f59d581f606311"
+    },
+    {
+      "path": "assets/link_1_collision.stl",
+      "upstream_path": "robot_models/yam/assets/link_1_collision.stl",
+      "sha256": "63a33ff6430f3d54938ff9b07b13c4b7eb16fb319791a078a5bfe3c7b922266f"
+    },
+    {
+      "path": "assets/link_1_visual.stl",
+      "upstream_path": "robot_models/yam/assets/link_1_visual.stl",
+      "sha256": "63a33ff6430f3d54938ff9b07b13c4b7eb16fb319791a078a5bfe3c7b922266f"
+    },
+    {
+      "path": "assets/link_2_collision.stl",
+      "upstream_path": "robot_models/yam/assets/link_2_collision.stl",
+      "sha256": "b7f8fec3c2ac6ec704d0fa9dd3d107ca388443fa5145dcb1853ce0bfce900c0c"
+    },
+    {
+      "path": "assets/link_2_visual.stl",
+      "upstream_path": "robot_models/yam/assets/link_2_visual.stl",
+      "sha256": "b7f8fec3c2ac6ec704d0fa9dd3d107ca388443fa5145dcb1853ce0bfce900c0c"
+    },
+    {
+      "path": "assets/link_3_collision.stl",
+      "upstream_path": "robot_models/yam/assets/link_3_collision.stl",
+      "sha256": "f071941587fddc22250cfe6688d1a3221e9e7066abc4b815228de3730cff2e5e"
+    },
+    {
+      "path": "assets/link_3_visual.stl",
+      "upstream_path": "robot_models/yam/assets/link_3_visual.stl",
+      "sha256": "f071941587fddc22250cfe6688d1a3221e9e7066abc4b815228de3730cff2e5e"
+    },
+    {
+      "path": "assets/link_4_collision.stl",
+      "upstream_path": "robot_models/yam/assets/link_4_collision.stl",
+      "sha256": "9da8a241b0762b2e5277fcee804cb6bd6c3e3675302a4a21f1464f47f751b26a"
+    },
+    {
+      "path": "assets/link_4_visual.stl",
+      "upstream_path": "robot_models/yam/assets/link_4_visual.stl",
+      "sha256": "9da8a241b0762b2e5277fcee804cb6bd6c3e3675302a4a21f1464f47f751b26a"
+    },
+    {
+      "path": "assets/link_5_collision.stl",
+      "upstream_path": "robot_models/yam/assets/link_5_collision.stl",
+      "sha256": "fde84b3c3c65306df8f3ef3214b22d086ad64f238875b981c906c5a304d7b6ce"
+    },
+    {
+      "path": "assets/link_5_visual.stl",
+      "upstream_path": "robot_models/yam/assets/link_5_visual.stl",
+      "sha256": "fde84b3c3c65306df8f3ef3214b22d086ad64f238875b981c906c5a304d7b6ce"
+    },
+    {
+      "path": "assets/link_6_collision.stl",
+      "upstream_path": "robot_models/yam/assets/link_6_collision.stl",
+      "sha256": "bdcb036f52f7850ed1b7200a6b5ecce9a2bb2adbc2b23ee4f3af58fdba6c9fb9"
+    },
+    {
+      "path": "assets/link_6_visual.stl",
+      "upstream_path": "robot_models/yam/assets/link_6_visual.stl",
+      "sha256": "bdcb036f52f7850ed1b7200a6b5ecce9a2bb2adbc2b23ee4f3af58fdba6c9fb9"
+    },
+    {
+      "path": "yam.urdf",
+      "upstream_path": "robot_models/yam/yam.urdf",
+      "sha256": "685f6192d189154c5f9a1c85cc52918206b686e95eb98ee5b0d8151da82f4972"
+    },
+    {
+      "path": "yam.xml",
+      "upstream_path": "robot_models/yam/yam.xml",
+      "sha256": "01ddc51179cd5b32850b84f04453b0ae5845cccb028478c508aebb3e49783045"
+    }
+  ]
+}

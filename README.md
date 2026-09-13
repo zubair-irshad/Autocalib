@@ -2,6 +2,28 @@
 
 # Auto-Calibration
 
+## YAM / ABC-130k on Puget
+
+This fork adds top-camera and wrist-camera calibration using I2RT YAM URDF meshes,
+with CUDA motion fitting, optional RAFT flow, optimization videos, overlay videos,
+per-scene timing, and a resumable multi-GPU runner. This extension is mesh-based;
+a trained YAM Gaussian-splat backend is not included.
+
+```bash
+git clone https://github.com/zubair-irshad/Autocalib.git
+cd Autocalib
+bash scripts/setup_yam_puget.sh
+bash scripts/run_yam_puget.sh /absolute/path/ABC-130k --wrist
+```
+
+The YAM extension does not require cloning the original pipeline's submodules.
+Setup downloads the pinned robot mesh assets. Supply your own ABC-130k episodes;
+the dataset and generated videos are not committed here.
+
+See [YAM_PUGET.md](YAM_PUGET.md) for Ubuntu/A6000 setup, the tested DIS flow option,
+multi-GPU commands, output conventions, and validation limits. Two episodes were
+tested locally on CPU; CUDA/RAFT and multi-GPU execution await Puget validation.
+
 ### ----
 
 To run calibration on Droid, Robomind and Bridge datasets.

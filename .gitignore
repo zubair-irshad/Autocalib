@@ -42,3 +42,9 @@ logs/
 *.sqlite3
 *.bak
 .DS_Store
+
+# Local YAM environments, source episodes, and tool caches
+.venv*/
+.ruff_cache/
+ABC-130k/
+MUJOCO_LOG.TXT

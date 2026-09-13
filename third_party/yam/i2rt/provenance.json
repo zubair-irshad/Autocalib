@@ -1,0 +1,86 @@
+{
+  "repo": "i2rt-robotics/i2rt",
+  "commit": "5b72c47239bd056d0fa6c1a39edeb0537c89443c",
+  "files": [
+    {
+      "path": "LICENSE",
+      "upstream_path": "LICENSE",
+      "sha256": "7cd0a0224a287ebd6c45703eb6623d264c7810f8958d65de8f99e87ccd9f4891"
+    },
+    {
+      "path": "README.md",
+      "upstream_path": "i2rt/robot_models/arm/yam/v1/README.md",
+      "sha256": "370e2c8c46615839448e86b401fc71b53500989b02bc18531d5917fdfbe3b875"
+    },
+    {
+      "path": "assets/base.stl",
+      "upstream_path": "i2rt/robot_models/arm/yam/v1/assets/base.stl",
+      "sha256": "d95a5aa0c06a5ef6da02788b0df5a14e4202c1ae8eb2771a7f6f8947e3a490c7"
+    },
+    {
+      "path": "assets/crank_4310/gripper.stl",
+      "upstream_path": "i2rt/robot_models/arm/yam/v1/assets/crank_4310/gripper.stl",
+      "sha256": "efbe5e92e44c715d9c0ea0617e412a24db6ea0f3dabf18edc6746cd685a5d85f"
+    },
+    {
+      "path": "assets/crank_4310/tip_left.stl",
+      "upstream_path": "i2rt/robot_models/arm/yam/v1/assets/crank_4310/tip_left.stl",
+      "sha256": "b70f8c1e32ccfae03fec46ac10a0f04195347bc530ee761143a5d7c5bb07ae07"
+    },
+    {
+      "path": "assets/crank_4310/tip_right.stl",
+      "upstream_path": "i2rt/robot_models/arm/yam/v1/assets/crank_4310/tip_right.stl",
+      "sha256": "f074d03ca2a4fdc53cb7f47240111010b02b6fe7bae4465230b6ac3e5a1b32d6"
+    },
+    {
+      "path": "assets/gripper.stl",
+      "upstream_path": "i2rt/robot_models/arm/yam/v1/assets/gripper.stl",
+      "sha256": "e0dad958755f0a9d58e6bea4f16fed2849146ae81c0dbd45487aff308cb49e58"
+    },
+    {
+      "path": "assets/link1.stl",
+      "upstream_path": "i2rt/robot_models/arm/yam/v1/assets/link1.stl",
+      "sha256": "41f7dfbd0471a0f96884c73782e82927f2bbc6aced9b55c0111da1b52d6e0c50"
+    },
+    {
+      "path": "assets/link2.stl",
+      "upstream_path": "i2rt/robot_models/arm/yam/v1/assets/link2.stl",
+      "sha256": "067b51567a95a631d50fc02515bd045a2eb7f2f34489d5aec31d9f3f6ce58b30"
+    },
+    {
+      "path": "assets/link3.stl",
+      "upstream_path": "i2rt/robot_models/arm/yam/v1/assets/link3.stl",
+      "sha256": "9650a114393881b54a68822ba3fb48fcd3318023ebecaf251e4f7804e91f801c"
+    },
+    {
+      "path": "assets/link4.stl",
+      "upstream_path": "i2rt/robot_models/arm/yam/v1/assets/link4.stl",
+      "sha256": "42740ce2bb8693760a35dc6e9e8fe0981999c02d6bf167a465c9936acf41c557"
+    },
+    {
+      "path": "assets/link5.stl",
+      "upstream_path": "i2rt/robot_models/arm/yam/v1/assets/link5.stl",
+      "sha256": "f70eb1191d6a1ccbb748a46fe8ba541f38094c9829fd1859300e70360c5a07c7"
+    },
+    {
+      "path": "assets/tip_left.stl",
+      "upstream_path": "i2rt/robot_models/arm/yam/v1/assets/tip_left.stl",
+      "sha256": "281354d77e4914ccd994b6c71fecce49a91527701f268d318f801769a6913685"
+    },
+    {
+      "path": "assets/tip_right.stl",
+      "upstream_path": "i2rt/robot_models/arm/yam/v1/assets/tip_right.stl",
+      "sha256": "070925233d4b742c05c4d5508e951deba5947c2fabfa336a4e33db599c70ac3a"
+    },
+    {
+      "path": "yam.urdf",
+      "upstream_path": "i2rt/robot_models/arm/yam/v1/yam.urdf",
+      "sha256": "5b9ccf966aa353ccf1e82ad6e751b899333fab7c0b4d1071316172201da68c4e"
+    },
+    {
+      "path": "yam.xml",
+      "upstream_path": "i2rt/robot_models/arm/yam/v1/yam.xml",
+      "sha256": "49cf63ee0f354210dac52e66f0eb87244569a3ac7ca04a17be82cbf477441ac4"
+    }
+  ]
+}
